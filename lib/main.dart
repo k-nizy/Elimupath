@@ -5,6 +5,7 @@ import 'firebase_options.dart';
 import 'core/di/injection.dart';
 import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
+// seed_data.dart was used once to populate Firestore — data is now live.
 
 /// ElimuPath — Rwandan School Finder
 ///
@@ -22,6 +23,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
 
   await setupDependencies();
 
