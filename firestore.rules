@@ -1,0 +1,91 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ── USERS COLLECTION ──
+    match /users/{userId} {
+      // Read: Only the user can read their own document
+      allow read: if request.auth != null && request.auth.uid == userId;
+      
+      // Write: Only the user can write their own document
+      // Creation is allowed during registration
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == userId;
+      allow delete: if false; // Users cannot delete their own account document
+    }
+    
+    // ── SCHOOLS COLLECTION ──
+    match /schools/{schoolId} {
+      // Read: Any authenticated user can read school information
+      allow read: if request.auth != null;
+      
+      // Write: Only the school admin can write to their school
+      allow create: if request.auth != null && 
+                       request.resource.data.adminId == request.auth.uid;
+      allow update: if request.auth != null && 
+                        resource.data.adminId == request.auth.uid;
+      allow delete: if request.auth != null && 
+                        resource.data.adminId == request.auth.uid;
+    }
+    
+    // ── APPLICATIONS COLLECTION ──
+    match /applications/{applicationId} {
+      // Read: The student applicant OR the school admin can read
+      allow read: if request.auth != null && 
+                    (resource.data.studentId == request.auth.uid || 
+                     isSchoolAdmin(resource.data.schoolId, request.auth.uid));
+      
+      // Create: Only the student can create applications for themselves
+      allow create: if request.auth != null && 
+                       request.resource.data.studentId == request.auth.uid;
+      
+      // Update: Only the school admin can update (accept/reject)
+      allow update: if request.auth != null && 
+                        isSchoolAdmin(resource.data.schoolId, request.auth.uid);
+      
+      // Delete: The student can withdraw their own application
+      allow delete: if request.auth != null && 
+                       resource.data.studentId == request.auth.uid;
+    }
+    
+    // ── FAVORITES COLLECTION ──
+    match /favorites/{favoriteId} {
+      // Read: Only the user can read their own favorites
+      allow read: if request.auth != null && 
+                    resource.data.userId == request.auth.uid;
+      
+      // Create: Only the user can add their own favorites
+      allow create: if request.auth != null && 
+                       request.resource.data.userId == request.auth.uid;
+      
+      // Update: Not allowed (favorites are immutable)
+      allow update: if false;
+      
+      // Delete: Only the user can remove their own favorites
+      allow delete: if request.auth != null && 
+                       resource.data.userId == request.auth.uid;
+    }
+    
+    // ── ANNOUNCEMENTS COLLECTION ──
+    match /announcements/{announcementId} {
+      // Read: Any authenticated user can read announcements
+      allow read: if request.auth != null;
+      
+      // Write: Only the school admin can post announcements for their school
+      allow create: if request.auth != null && 
+                       isSchoolAdmin(request.resource.data.schoolId, request.auth.uid);
+      allow update: if request.auth != null && 
+                        isSchoolAdmin(resource.data.schoolId, request.auth.uid);
+      allow delete: if request.auth != null && 
+                        isSchoolAdmin(resource.data.schoolId, request.auth.uid);
+    }
+    
+    // ── HELPER FUNCTIONS ──
+    
+    // Check if the user is the admin of the specified school
+    function isSchoolAdmin(schoolId, userId) {
+      return exists(/databases/$(database)/documents/schools/$(schoolId)) &&
+             get(/databases/$(database)/documents/schools/$(schoolId)).data.adminId == userId;
+    }
+  }
+}

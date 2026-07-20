@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../features/auth/presentation/screens/splash_screen.dart';
+import '../../features/auth/presentation/screens/onboarding_screen.dart';
+import '../../features/auth/presentation/screens/login_screen.dart';
+import '../../features/auth/presentation/screens/register_screen.dart';
+import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 
 /// The central router for ElimuPath.
 ///
@@ -41,27 +46,29 @@ class AppRouter {
       routes: [
         // ── Auth routes (Frank) ──
         GoRoute(
-          path: '/login',
-          name: 'login',
-          builder: (context, state) => const _PlaceholderScreen(title: 'Login'),
-        ),
-        GoRoute(
-          path: '/register',
-          name: 'register',
-          builder: (context, state) =>
-              const _PlaceholderScreen(title: 'Register'),
-        ),
-        GoRoute(
-          path: '/forgot-password',
-          name: 'forgot-password',
-          builder: (context, state) =>
-              const _PlaceholderScreen(title: 'Forgot Password'),
+          path: '/splash',
+          name: 'splash',
+          builder: (context, state) => const SplashScreen(),
         ),
         GoRoute(
           path: '/onboarding',
           name: 'onboarding',
-          builder: (context, state) =>
-              const _PlaceholderScreen(title: 'Onboarding'),
+          builder: (context, state) => const OnboardingScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          name: 'login',
+          builder: (context, state) => const LoginScreen(),
+        ),
+        GoRoute(
+          path: '/register',
+          name: 'register',
+          builder: (context, state) => const RegisterScreen(),
+        ),
+        GoRoute(
+          path: '/forgot-password',
+          name: 'forgot-password',
+          builder: (context, state) => const ForgotPasswordScreen(),
         ),
 
         // ── Student/Parent routes (Armstrong) ──
@@ -105,15 +112,14 @@ class AppRouter {
         GoRoute(
           path: '/admin',
           name: 'admin',
-          builder: (context, state) =>
-              const _PlaceholderScreen(title: 'Admin Panel'),
+          builder: (context, state) => const _PlaceholderScreen(title: 'Admin Panel'),
         ),
       ],
     );
   }
 }
 
-/// Temporary placeholder screen.
+/// Temporary placeholder screen for non-auth routes.
 /// Armstrong will replace each of these with real screens.
 class _PlaceholderScreen extends StatelessWidget {
   final String title;

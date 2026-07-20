@@ -1,4 +1,8 @@
 import 'package:get_it/get_it.dart';
+import '../../features/auth/data/datasources/firebase_auth_datasource.dart';
+import '../../features/auth/data/repositories/auth_repository_impl.dart';
+import '../../features/auth/domain/auth_repository.dart';
+import '../../features/auth/presentation/bloc/auth_bloc.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -9,8 +13,20 @@ final GetIt sl = GetIt.instance;
 /// register it here so the rest of the app can find it.
 Future<void> setupDependencies() async {
   // ── Auth ──
-  // TODO (Frank): Register AuthRepository implementation
-  // sl.registerLazySingleton<AuthRepository>(() => FirebaseAuthRepository());
+  // Datasource
+  sl.registerLazySingleton<FirebaseAuthDatasource>(
+    () => FirebaseAuthDatasource(),
+  );
+
+  // Repository
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(sl<FirebaseAuthDatasource>()),
+  );
+
+  // Bloc
+  sl.registerFactory<AuthBloc>(
+    () => AuthBloc(sl<AuthRepository>()),
+  );
 
   // ── Schools ──
   // TODO (Olga): Register SchoolRepository implementation

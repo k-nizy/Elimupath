@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+// ignore_for_file: avoid_print
+
 Future<void> seedRwandanSchools() async {
   final firestore = FirebaseFirestore.instance;
   final schoolsCollection = firestore.collection('schools');
