@@ -96,6 +96,7 @@ class FirebaseAuthDatasource {
         role: role,
         photoUrl: '',
         schoolId: role == 'schoolAdmin' ? null : null, // Will be set for school admins later
+        emailVerified: credential.user!.emailVerified,
         createdAt: DateTime.now(),
       );
 
@@ -135,7 +136,7 @@ class FirebaseAuthDatasource {
       return _mapFirebaseUserToEntity(user);
     }
 
-    final userModel = UserModel.fromJson(userDoc.data()!, user.uid);
+    final userModel = UserModel.fromJson(userDoc.data()!, user.uid, user.emailVerified);
     return userModel.toEntity();
   }
 
@@ -147,6 +148,7 @@ class FirebaseAuthDatasource {
       role: 'student', // Default if not in Firestore yet
       photoUrl: user.photoURL ?? '',
       schoolId: null,
+      emailVerified: user.emailVerified,
       createdAt: user.metadata.creationTime ?? DateTime.now(),
     );
   }

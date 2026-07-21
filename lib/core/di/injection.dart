@@ -3,6 +3,14 @@ import '../../features/auth/data/datasources/firebase_auth_datasource.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
 import '../../features/auth/domain/auth_repository.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
+import '../../features/schools/data/repositories/school_repository_impl.dart';
+import '../../features/schools/domain/school_repository.dart';
+import '../../features/applications/data/repositories/application_repository_impl.dart';
+import '../../features/applications/domain/application_repository.dart';
+import '../../features/favorites/data/repositories/favorite_repository_impl.dart';
+import '../../features/favorites/domain/favorite_repository.dart';
+import '../../features/announcements/data/repositories/announcement_repository_impl.dart';
+import '../../features/announcements/domain/announcement_repository.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -29,23 +37,26 @@ Future<void> setupDependencies() async {
   );
 
   // ── Schools ──
-  // TODO (Olga): Register SchoolRepository implementation
-  // sl.registerLazySingleton<SchoolRepository>(() => FirestoreSchoolRepository());
+  sl.registerLazySingleton<SchoolRepository>(
+    () => SchoolRepositoryImpl(),
+  );
 
   // ── Applications ──
-  // TODO (Olga): Register ApplicationRepository implementation
-  // sl.registerLazySingleton<ApplicationRepository>(() => FirestoreApplicationRepository());
+  sl.registerLazySingleton<ApplicationRepository>(
+    () => ApplicationRepositoryImpl(),
+  );
 
   // ── Favorites ──
-  // TODO (Olga): Register FavoriteRepository implementation
-  // sl.registerLazySingleton<FavoriteRepository>(() => FirestoreFavoriteRepository());
+  sl.registerLazySingleton<FavoriteRepository>(
+    () => FavoriteRepositoryImpl(),
+  );
 
   // ── Announcements ──
-  // TODO (Olga): Register AnnouncementRepository implementation
-  // sl.registerLazySingleton<AnnouncementRepository>(() => FirestoreAnnouncementRepository());
+  sl.registerLazySingleton<AnnouncementRepository>(
+    () => AnnouncementRepositoryImpl(),
+  );
 
   // ── Blocs ──
-  // TODO (Frank): Register AuthBloc
   // TODO (Olga): Register SchoolsBloc, ApplicationsBloc, FavoritesBloc, AnnouncementsBloc
   // TODO (Kenny): Register SettingsCubit
 }

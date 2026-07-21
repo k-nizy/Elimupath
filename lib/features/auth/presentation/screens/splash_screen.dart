@@ -1,10 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:go_router/go_router.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _checkOnboardingAndAuth();
+  }
+
+  Future<void> _checkOnboardingAndAuth() async {
+    final prefs = await SharedPreferences.getInstance();
+    final seenOnboarding = prefs.getBool('seenOnboarding') ?? false;
+
+    if (!seenOnboarding) {
+      if (mounted) {
+        context.go('/onboarding');
+      }
+    }
+    // If seen onboarding, let the AuthBloc handle auth state routing
+  }
 
   @override
   Widget build(BuildContext context) {

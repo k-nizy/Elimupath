@@ -8,6 +8,7 @@ class UserModel extends Equatable {
   final String role;
   final String photoUrl;
   final String? schoolId;
+  final bool emailVerified;
   final DateTime createdAt;
 
   const UserModel({
@@ -17,11 +18,12 @@ class UserModel extends Equatable {
     required this.role,
     required this.photoUrl,
     this.schoolId,
+    required this.emailVerified,
     required this.createdAt,
   });
 
   /// Convert from Firestore document
-  factory UserModel.fromJson(Map<String, dynamic> json, String id) {
+  factory UserModel.fromJson(Map<String, dynamic> json, String id, bool emailVerified) {
     return UserModel(
       id: id,
       fullName: json['fullName'] as String,
@@ -29,6 +31,7 @@ class UserModel extends Equatable {
       role: json['role'] as String,
       photoUrl: json['photoUrl'] as String? ?? '',
       schoolId: json['schoolId'] as String?,
+      emailVerified: emailVerified,
       createdAt: (json['createdAt'] as dynamic).toDate(),
     );
   }
@@ -54,6 +57,7 @@ class UserModel extends Equatable {
       role: role,
       photoUrl: photoUrl,
       schoolId: schoolId,
+      emailVerified: emailVerified,
       createdAt: createdAt,
     );
   }
@@ -67,10 +71,11 @@ class UserModel extends Equatable {
       role: entity.role,
       photoUrl: entity.photoUrl,
       schoolId: entity.schoolId,
+      emailVerified: entity.emailVerified,
       createdAt: entity.createdAt,
     );
   }
 
   @override
-  List<Object?> get props => [id, fullName, email, role, photoUrl, schoolId, createdAt];
+  List<Object?> get props => [id, fullName, email, role, photoUrl, schoolId, emailVerified, createdAt];
 }

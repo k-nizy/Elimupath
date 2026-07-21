@@ -44,10 +44,12 @@ class ElimuPathApp extends StatelessWidget {
         builder: (context, state) {
           final isLoggedIn = state is Authenticated;
           final userRole = state is Authenticated ? state.user.role : null;
+          final emailVerified = state is Authenticated ? state.user.emailVerified : false;
 
           final router = AppRouter.router(
             isLoggedIn: isLoggedIn,
             userRole: userRole,
+            emailVerified: emailVerified,
           );
 
           return MaterialApp.router(

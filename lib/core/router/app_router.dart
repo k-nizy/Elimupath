@@ -5,15 +5,17 @@ import '../../features/auth/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
+import '../../features/auth/presentation/screens/verify_email_screen.dart';
 
 /// The central router for ElimuPath.
 ///
 /// Auth redirect logic:
 ///   - Not logged in       → /login
+///   - Logged in but not verified → /verify-email
 ///   - Logged in (student) → /home
 ///   - Logged in (admin)   → /admin
 ///
-/// The [isLoggedIn] and [userRole] values should come from
+/// The [isLoggedIn], [userRole], and [emailVerified] values should come from
 /// AuthBloc state once Frank wires it up.
 class AppRouter {
   /// Build the GoRouter instance.
@@ -21,6 +23,7 @@ class AppRouter {
   static GoRouter router({
     required bool isLoggedIn,
     required String? userRole,
+    required bool emailVerified,
   }) {
     return GoRouter(
       initialLocation: '/login',
@@ -28,15 +31,21 @@ class AppRouter {
         final loggingIn = state.matchedLocation == '/login' ||
             state.matchedLocation == '/register' ||
             state.matchedLocation == '/forgot-password' ||
-            state.matchedLocation == '/onboarding';
+            state.matchedLocation == '/onboarding' ||
+            state.matchedLocation == '/verify-email';
 
         // Not logged in → force to login (unless already there)
         if (!isLoggedIn) {
           return loggingIn ? null : '/login';
         }
 
+        // Logged in but email not verified → force to verification screen
+        if (!emailVerified && state.matchedLocation != '/verify-email') {
+          return '/verify-email';
+        }
+
         // Logged in but still on a login page → send to correct home
-        if (loggingIn) {
+        if (loggingIn && emailVerified) {
           return userRole == 'schoolAdmin' ? '/admin' : '/home';
         }
 
@@ -69,6 +78,11 @@ class AppRouter {
           path: '/forgot-password',
           name: 'forgot-password',
           builder: (context, state) => const ForgotPasswordScreen(),
+        ),
+        GoRoute(
+          path: '/verify-email',
+          name: 'verify-email',
+          builder: (context, state) => const VerifyEmailScreen(),
         ),
 
         // ── Student/Parent routes (Armstrong) ──
